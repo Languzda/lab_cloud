@@ -2,13 +2,14 @@ from fastapi import FastAPI, Depends, HTTPException
 import asyncpg
 from typing import List, Optional
 from pydantic import BaseModel
+import os
 
 app = FastAPI()
 
-DB_HOST = "localhost"  # Nazwa kontenera PostgreSQL
-DB_NAME = "postgres"
-DB_USER = "postgres"
-DB_PASSWORD = "admin"
+DB_HOST = os.environ.get("DB_HOST", "lc-postgres")  # Nazwa kontenera PostgreSQL
+DB_NAME = os.environ.get("DB_NAME","postgres")
+DB_USER = os.environ.get("DB_USER", "postgres")
+DB_PASSWORD = os.environ.get("DB_PASSWORD","admin")
 
 # Model danych do walidacji
 class Game(BaseModel):
@@ -109,4 +110,4 @@ async def get_stats(db=Depends(get_db)):
 # Uruchamianie aplikacji
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8082)
+    uvicorn.run(app, host="0.0.0.0", port=8082)
