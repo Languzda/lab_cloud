@@ -12,6 +12,17 @@ services:
     depends_on:
       - lc-postgres
 
+  lc-frontend:
+    restart: always
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    container_name: lc-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - lc-api
+
   lc-postgres:
     restart: always
     image: postgres:14.13-alpine3.20

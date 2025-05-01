@@ -1,0 +1,67 @@
+.game-card {
+  list-style: none;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.game-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+}
+
+.game-header {
+  font-size: 18px;
+  margin-bottom: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.rank {
+  font-weight: bold;
+  color: #444;
+}
+
+.title {
+  font-weight: bold;
+  color: #222;
+}
+
+.year {
+  color: #666;
+  font-size: 14px;
+}
+
+.game-details p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.sales-list {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0 0;
+  font-size: 13px;
+  color: #555;
+}
+
+.sales-line {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #444;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.sales-line span {
+  white-space: nowrap;
+}

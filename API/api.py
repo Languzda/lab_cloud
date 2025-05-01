@@ -2,9 +2,18 @@ from fastapi import FastAPI, Depends, HTTPException
 import asyncpg
 from typing import List, Optional
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 import os
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Możesz podać konkretne domeny, np. ["http://localhost:3000"]
+    allow_credentials=True,
+    allow_methods=["*"],  # Pozwól na wszystkie metody (GET, POST, PUT, DELETE, itd.)
+    allow_headers=["*"],  # Pozwól na wszystkie nagłówki
+)
 
 DB_HOST = os.environ.get("DB_HOST", "lc-postgres")  # Nazwa kontenera PostgreSQL
 DB_NAME = os.environ.get("DB_NAME","postgres")
@@ -47,19 +56,19 @@ async def startup():
 async def shutdown():
     await db_pool.close()
 
-# 1️⃣ Pobieranie wszystkich rekordów (ocena 3.0)
+#Pobieranie wszystkich rekordów
 @app.get("/games", response_model=List[dict])
-async def get_games(name: Optional[str] = None, db=Depends(get_db)):
+async def get_games(name: Optional[str] = None, limit: Optional[int] = None, db=Depends(get_db)):
     if name:
-        query = "SELECT * FROM games WHERE name ILIKE $1;"
-        rows = await db.fetch(query, f"%{name}%")
+        query = "SELECT * FROM games WHERE name ILIKE $1 ORDER BY rank LIMIT $2;" if limit else "SELECT * FROM games WHERE name ILIKE $1 ORDER BY rank;"
+        rows = await db.fetch(query, f"%{name}%", limit) if limit else await db.fetch(query, f"%{name}%")
     else:
-        query = "SELECT * FROM games;"
-        rows = await db.fetch(query)
+        query = "SELECT * FROM games ORDER BY rank LIMIT $1;" if limit else "SELECT * FROM games ORDER BY rank;"
+        rows = await db.fetch(query, limit) if limit else await db.fetch(query)
 
     return [dict(row) for row in rows]
 
-# 2️⃣ Dodawanie nowego rekordu (ocena 4.0)
+# Dodawanie nowego rekordu
 @app.post("/games")
 async def add_game(game: Game, db=Depends(get_db)):
     query = """
@@ -74,7 +83,7 @@ async def add_game(game: Game, db=Depends(get_db)):
     
     return dict(row)
 
-# 3️⃣ Modyfikacja istniejącego rekordu (ocena 4.5)
+# Modyfikacja istniejącego rekordu
 @app.put("/games/{game_id}")
 async def update_game(game_id: int, game: Game, db=Depends(get_db)):
     query = """
@@ -93,7 +102,6 @@ async def update_game(game_id: int, game: Game, db=Depends(get_db)):
     
     return dict(row)
 
-# 4️⃣ Zaawansowane przetwarzanie – statystyki sprzedaży (ocena 5.0)
 @app.get("/stats")
 async def get_stats(db=Depends(get_db)):
     query = """
