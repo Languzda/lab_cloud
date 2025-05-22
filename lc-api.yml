@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lc-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lc-api
+  template:
+    metadata:
+      labels:
+        app: lc-api
+    spec:
+      containers:
+        - name: lc-api
+          image: langusda/lc-api:latest
+          ports:
+            - containerPort: 8082
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lc-api
+spec:
+  selector:
+    app: lc-api
+  # ports:
+  #   - protocol: TCP
+  #     port: 8082
+  #     targetPort: 8082
+  type: NodePort
+  ports:
+    - port: 8082
+      targetPort: 8082
+      nodePort: 30002

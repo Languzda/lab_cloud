@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lc-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lc-frontend
+  template:
+    metadata:
+      labels:
+        app: lc-frontend
+    spec:
+      containers:
+        - name: lc-frontend
+          image: langusda/lc-frontend:latest
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lc-frontend
+spec:
+  selector:
+    app: lc-frontend
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 80
+      nodePort: 30000
+  type: NodePort
